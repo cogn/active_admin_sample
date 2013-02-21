@@ -1,0 +1,254 @@
+  [1m[36m (91.6ms)[0m  [1mCREATE TABLE `schema_migrations` (`version` varchar(255) NOT NULL) ENGINE=InnoDB[0m
+  [1m[35m (135.1ms)[0m  CREATE UNIQUE INDEX `unique_schema_migrations` ON `schema_migrations` (`version`)
+  [1m[36m (0.1ms)[0m  [1mSELECT `schema_migrations`.`version` FROM `schema_migrations` [0m
+Migrating to CreateAdminNotes (20110919134727)
+  [1m[35m (62.7ms)[0m  CREATE TABLE `admin_notes` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `resource_id` int(11) NOT NULL, `resource_type` varchar(255) NOT NULL, `admin_user_id` int(11), `admin_user_type` varchar(255), `body` text, `created_at` datetime, `updated_at` datetime) ENGINE=InnoDB
+  [1m[36m (159.8ms)[0m  [1mCREATE INDEX `index_admin_notes_on_resource_type_and_resource_id` ON `admin_notes` (`resource_type`, `resource_id`)[0m
+  [1m[35m (143.2ms)[0m  CREATE INDEX `index_admin_notes_on_admin_user_type_and_admin_user_id` ON `admin_notes` (`admin_user_type`, `admin_user_id`)
+  [1m[36m (33.9ms)[0m  [1mINSERT INTO `schema_migrations` (`version`) VALUES ('20110919134727')[0m
+Migrating to MoveAdminNotesToComments (20110919134728)
+  [1m[35m (174.8ms)[0m  DROP INDEX `index_admin_notes_on_admin_user_type_and_admin_user_id` ON `admin_notes`
+  [1m[36m (33.1ms)[0m  [1mRENAME TABLE `admin_notes` TO `active_admin_comments`[0m
+  [1m[35m (0.3ms)[0m  SHOW COLUMNS FROM `active_admin_comments` LIKE 'admin_user_type'
+  [1m[36m (165.0ms)[0m  [1mALTER TABLE `active_admin_comments` CHANGE `admin_user_type` `author_type` varchar(255) DEFAULT NULL[0m
+  [1m[35m (0.2ms)[0m  SHOW COLUMNS FROM `active_admin_comments` LIKE 'admin_user_id'
+  [1m[36m (134.2ms)[0m  [1mALTER TABLE `active_admin_comments` CHANGE `admin_user_id` `author_id` int(11) DEFAULT NULL[0m
+  [1m[35m (169.7ms)[0m  ALTER TABLE `active_admin_comments` ADD `namespace` varchar(255)
+  [1m[36m (168.1ms)[0m  [1mCREATE INDEX `index_active_admin_comments_on_namespace` ON `active_admin_comments` (`namespace`)[0m
+  [1m[35m (143.1ms)[0m  CREATE INDEX `index_active_admin_comments_on_author_type_and_author_id` ON `active_admin_comments` (`author_type`, `author_id`)
+  [1m[36m (0.2ms)[0m  [1mUPDATE active_admin_comments SET namespace='admin'[0m
+  [1m[35m (24.2ms)[0m  INSERT INTO `schema_migrations` (`version`) VALUES ('20110919134728')
+Migrating to CreateProducts (20110919171838)
+  [1m[36m (64.9ms)[0m  [1mCREATE TABLE `products` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `name` varchar(255), `price` decimal, `released_at` datetime, `created_at` datetime, `updated_at` datetime) ENGINE=InnoDB[0m
+  [1m[35m (33.0ms)[0m  INSERT INTO `schema_migrations` (`version`) VALUES ('20110919171838')
+Migrating to CreateCategories (20110919174935)
+  [1m[36m (74.5ms)[0m  [1mCREATE TABLE `categories` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `name` varchar(255), `created_at` datetime, `updated_at` datetime) ENGINE=InnoDB[0m
+  [1m[35m (33.1ms)[0m  INSERT INTO `schema_migrations` (`version`) VALUES ('20110919174935')
+Migrating to AddCategoryIdToProducts (20110919174955)
+  [1m[36m (167.2ms)[0m  [1mALTER TABLE `products` ADD `category_id` int(11)[0m
+  [1m[35m (32.9ms)[0m  INSERT INTO `schema_migrations` (`version`) VALUES ('20110919174955')
+Migrating to DeviseCreateAdminUsers (20110919204722)
+  [1m[36m (90.0ms)[0m  [1mCREATE TABLE `admin_users` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `email` varchar(255) DEFAULT '' NOT NULL, `encrypted_password` varchar(128) DEFAULT '' NOT NULL, `reset_password_token` varchar(255), `reset_password_sent_at` datetime, `remember_created_at` datetime, `sign_in_count` int(11) DEFAULT 0, `current_sign_in_at` datetime, `last_sign_in_at` datetime, `current_sign_in_ip` varchar(255), `last_sign_in_ip` varchar(255), `created_at` datetime, `updated_at` datetime) ENGINE=InnoDB[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (0.3ms)[0m  [1mSELECT 1 FROM `admin_users` WHERE `admin_users`.`email` = BINARY 'admin@example.com' LIMIT 1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO `admin_users` (`created_at`, `current_sign_in_at`, `current_sign_in_ip`, `email`, `encrypted_password`, `last_sign_in_at`, `last_sign_in_ip`, `remember_created_at`, `reset_password_sent_at`, `reset_password_token`, `sign_in_count`, `updated_at`) VALUES ('2013-01-17 10:22:34', NULL, NULL, 'admin@example.com', '$2a$10$HSXHIe.D8CAcuZsBdLf5M.4011UFtqhmbGcZiYFfAGOpVDu3tkHWq', NULL, NULL, NULL, NULL, NULL, 0, '2013-01-17 10:22:34')
+  [1m[36m (28.5ms)[0m  [1mCOMMIT[0m
+  [1m[35m (193.8ms)[0m  CREATE UNIQUE INDEX `index_admin_users_on_email` ON `admin_users` (`email`)
+  [1m[36m (387.3ms)[0m  [1mCREATE UNIQUE INDEX `index_admin_users_on_reset_password_token` ON `admin_users` (`reset_password_token`)[0m
+  [1m[35m (82.0ms)[0m  INSERT INTO `schema_migrations` (`version`) VALUES ('20110919204722')
+  [1m[36m (0.2ms)[0m  [1mSELECT `schema_migrations`.`version` FROM `schema_migrations` [0m
+
+
+Started GET "/admin/" for 127.0.0.1 at 2013-01-17 15:53:10 +0530
+  Processing by Admin::DashboardController#index as HTML
+Completed   in 1ms
+
+
+Started GET "/admin/login" for 127.0.0.1 at 2013-01-17 15:53:10 +0530
+  Processing by ActiveAdmin::Devise::SessionsController#new as HTML
+Rendered /home/cognizant/.rvm/gems/ruby-1.9.2-p290/gems/devise-1.4.5/app/views/devise/shared/_links.erb (1.6ms)
+Rendered /home/cognizant/.rvm/gems/ruby-1.9.2-p290/gems/activeadmin-0.3.1/app/views/active_admin/devise/sessions/new.html.erb within layouts/active_admin_logged_out (67.3ms)
+Compiled active_admin.css  (709ms)  (pid 3529)
+Compiled active_admin.js  (1ms)  (pid 3529)
+Compiled active_admin/base.js  (2ms)  (pid 3529)
+Compiled active_admin/vendor.js  (0ms)  (pid 3529)
+Completed 200 OK in 898ms (Views: 884.1ms | ActiveRecord: 2.1ms)
+
+
+Started GET "/assets/active_admin.css?body=1" for 127.0.0.1 at 2013-01-17 15:53:11 +0530
+Served asset /active_admin.css - 200 OK (3ms)
+
+
+Started GET "/assets/active_admin/vendor.js?body=1" for 127.0.0.1 at 2013-01-17 15:53:11 +0530
+Served asset /active_admin/vendor.js - 200 OK (4ms)
+
+
+Started GET "/assets/active_admin.js?body=1" for 127.0.0.1 at 2013-01-17 15:53:11 +0530
+Served asset /active_admin.js - 200 OK (45ms)
+
+
+Started GET "/assets/active_admin/base.js?body=1" for 127.0.0.1 at 2013-01-17 15:53:11 +0530
+Served asset /active_admin/base.js - 200 OK (46ms)
+
+
+Started POST "/admin/login" for 127.0.0.1 at 2013-01-17 15:54:05 +0530
+  Processing by ActiveAdmin::Devise::SessionsController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"II1s1/K1bjdVu3VUc55E6S3h01n/6TwjBKBidkVjaJo=", "admin_user"=>{"email"=>"admin@example.com", "password"=>"[FILTERED]", "remember_me"=>"0"}, "commit"=>"Login"}
+  [1m[36mAdminUser Load (0.3ms)[0m  [1mSELECT `admin_users`.* FROM `admin_users` WHERE `admin_users`.`email` = 'admin@example.com' LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (0.3ms)[0m  [1mUPDATE `admin_users` SET `last_sign_in_at` = '2013-01-17 10:24:05', `current_sign_in_at` = '2013-01-17 10:24:05', `last_sign_in_ip` = '127.0.0.1', `current_sign_in_ip` = '127.0.0.1', `sign_in_count` = 1, `updated_at` = '2013-01-17 10:24:05' WHERE `admin_users`.`id` = 1[0m
+  [1m[35m (32.4ms)[0m  COMMIT
+Redirected to http://localhost:3000/admin
+Completed 302 Found in 200ms
+
+
+Started GET "/admin" for 127.0.0.1 at 2013-01-17 15:54:05 +0530
+  Processing by Admin::DashboardController#index as HTML
+  [1m[36mAdminUser Load (0.2ms)[0m  [1mSELECT `admin_users`.* FROM `admin_users` WHERE `admin_users`.`id` = 1 LIMIT 1[0m
+  [1m[35mProduct Load (0.3ms)[0m  SELECT `products`.* FROM `products` ORDER BY released_at desc LIMIT 5
+Rendered /home/cognizant/.rvm/gems/ruby-1.9.2-p290/gems/activeadmin-0.3.1/app/views/active_admin/dashboard/index.html.arb (10.8ms)
+Completed 200 OK in 29ms (Views: 15.9ms | ActiveRecord: 1.7ms)
+
+
+Started GET "/assets/active_admin.css" for 127.0.0.1 at 2013-01-17 15:54:05 +0530
+Served asset /active_admin.css - 200 OK (0ms)
+
+
+Started GET "/assets/active_admin.js" for 127.0.0.1 at 2013-01-17 15:54:05 +0530
+Served asset /active_admin.js - 200 OK (0ms)
+
+
+Started GET "/admin/products" for 127.0.0.1 at 2013-01-17 15:54:08 +0530
+  Processing by Admin::ProductsController#index as HTML
+  [1m[36mAdminUser Load (0.1ms)[0m  [1mSELECT `admin_users`.* FROM `admin_users` WHERE `admin_users`.`id` = 1 LIMIT 1[0m
+  [1m[35m (0.2ms)[0m  SELECT COUNT(*) FROM `products` WHERE `products`.`released_at` IS NULL
+  [1m[36m (0.2ms)[0m  [1mSELECT COUNT(count_column) FROM (SELECT 1 AS count_column FROM `products` LIMIT 30 OFFSET 0) subquery_for_count [0m
+  [1m[35mCategory Load (0.1ms)[0m  SELECT `categories`.* FROM `categories` 
+Rendered /home/cognizant/.rvm/gems/ruby-1.9.2-p290/gems/activeadmin-0.3.1/app/views/active_admin/resource/index.html.arb (86.3ms)
+Completed 200 OK in 121ms (Views: 90.6ms | ActiveRecord: 2.6ms)
+
+
+Started GET "/assets/active_admin/datepicker/datepicker-input-icon.png" for 127.0.0.1 at 2013-01-17 15:54:08 +0530
+Served asset /active_admin/datepicker/datepicker-input-icon.png - 200 OK (3ms)
+
+
+Started GET "/admin/products/new" for 127.0.0.1 at 2013-01-17 15:54:13 +0530
+  Processing by Admin::ProductsController#new as HTML
+  [1m[36mAdminUser Load (0.1ms)[0m  [1mSELECT `admin_users`.* FROM `admin_users` WHERE `admin_users`.`id` = 1 LIMIT 1[0m
+  [1m[35mCategory Load (0.1ms)[0m  SELECT `categories`.* FROM `categories` 
+Rendered /home/cognizant/.rvm/gems/ruby-1.9.2-p290/gems/activeadmin-0.3.1/app/views/active_admin/resource/new.html.arb (95.7ms)
+Completed 200 OK in 116ms (Views: 99.9ms | ActiveRecord: 2.0ms)
+
+
+Started GET "/admin/products" for 127.0.0.1 at 2013-01-17 15:54:19 +0530
+  Processing by Admin::ProductsController#index as HTML
+  [1m[36mAdminUser Load (0.1ms)[0m  [1mSELECT `admin_users`.* FROM `admin_users` WHERE `admin_users`.`id` = 1 LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  SELECT COUNT(*) FROM `products` WHERE `products`.`released_at` IS NULL
+  [1m[36m (0.1ms)[0m  [1mSELECT COUNT(count_column) FROM (SELECT 1 AS count_column FROM `products` LIMIT 30 OFFSET 0) subquery_for_count [0m
+  [1m[35mCategory Load (0.1ms)[0m  SELECT `categories`.* FROM `categories` 
+Rendered /home/cognizant/.rvm/gems/ruby-1.9.2-p290/gems/activeadmin-0.3.1/app/views/active_admin/resource/index.html.arb (90.2ms)
+Completed 200 OK in 109ms (Views: 93.9ms | ActiveRecord: 2.3ms)
+
+
+Started GET "/assets/active_admin.css" for 127.0.0.1 at 2013-01-17 15:54:19 +0530
+Served asset /active_admin.css - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_admin.js" for 127.0.0.1 at 2013-01-17 15:54:19 +0530
+Served asset /active_admin.js - 304 Not Modified (0ms)
+
+
+Started GET "/admin/products/new" for 127.0.0.1 at 2013-01-17 15:54:52 +0530
+  Processing by Admin::ProductsController#new as HTML
+  [1m[36mAdminUser Load (0.2ms)[0m  [1mSELECT `admin_users`.* FROM `admin_users` WHERE `admin_users`.`id` = 1 LIMIT 1[0m
+  [1m[35mCategory Load (0.2ms)[0m  SELECT `categories`.* FROM `categories` 
+Rendered /home/cognizant/.rvm/gems/ruby-1.9.2-p290/gems/activeadmin-0.3.1/app/views/active_admin/resource/new.html.arb (30.8ms)
+Completed 200 OK in 107ms (Views: 34.3ms | ActiveRecord: 2.6ms)
+
+
+Started GET "/assets/active_admin.css" for 127.0.0.1 at 2013-01-17 15:54:52 +0530
+Served asset /active_admin.css - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_admin.js" for 127.0.0.1 at 2013-01-17 15:54:53 +0530
+Served asset /active_admin.js - 304 Not Modified (0ms)
+
+
+Started POST "/admin/products" for 127.0.0.1 at 2013-01-17 15:55:31 +0530
+  Processing by Admin::ProductsController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"II1s1/K1bjdVu3VUc55E6S3h01n/6TwjBKBidkVjaJo=", "product"=>{"category_id"=>"1", "name"=>"Product1", "price"=>"20", "released_at(1i)"=>"2012", "released_at(2i)"=>"2", "released_at(3i)"=>"6", "released_at(4i)"=>"04", "released_at(5i)"=>"07"}, "commit"=>"Create Product"}
+  [1m[36mAdminUser Load (0.1ms)[0m  [1mSELECT `admin_users`.* FROM `admin_users` WHERE `admin_users`.`id` = 1 LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO `products` (`category_id`, `created_at`, `name`, `price`, `released_at`, `updated_at`) VALUES (1, '2013-01-17 10:25:31', 'Product1', 20, '2012-02-06 04:07:00', '2013-01-17 10:25:31')[0m
+  [1m[35m (38.7ms)[0m  COMMIT
+Redirected to http://localhost:3000/admin/products/1
+Completed 302 Found in 69ms
+
+
+Started GET "/admin/products/1" for 127.0.0.1 at 2013-01-17 15:55:31 +0530
+  Processing by Admin::ProductsController#show as HTML
+  Parameters: {"id"=>"1"}
+  [1m[36mAdminUser Load (0.1ms)[0m  [1mSELECT `admin_users`.* FROM `admin_users` WHERE `admin_users`.`id` = 1 LIMIT 1[0m
+  [1m[35mProduct Load (0.4ms)[0m  SELECT `products`.* FROM `products` WHERE `products`.`id` = 1 LIMIT 1
+  [1m[36mCategory Load (0.2ms)[0m  [1mSELECT `categories`.* FROM `categories` WHERE `categories`.`id` = 1 LIMIT 1[0m
+  [1m[35m (0.4ms)[0m  SELECT COUNT(*) FROM `active_admin_comments` WHERE `active_admin_comments`.`resource_id` = 1 AND `active_admin_comments`.`resource_type` = 'Product' AND `active_admin_comments`.`namespace` = 'admin'
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT COUNT(*) FROM `active_admin_comments` WHERE `active_admin_comments`.`resource_id` = 1 AND `active_admin_comments`.`resource_type` = 'Product' AND `active_admin_comments`.`namespace` = 'admin'[0m
+Rendered /home/cognizant/.rvm/gems/ruby-1.9.2-p290/gems/activeadmin-0.3.1/app/views/active_admin/resource/show.html.arb (114.7ms)
+Completed 200 OK in 133ms (Views: 117.1ms | ActiveRecord: 3.8ms)
+
+
+Started GET "/assets/active_admin.css" for 127.0.0.1 at 2013-01-17 15:55:31 +0530
+Served asset /active_admin.css - 304 Not Modified (1ms)
+
+
+Started GET "/assets/active_admin.js" for 127.0.0.1 at 2013-01-17 15:55:31 +0530
+Served asset /active_admin.js - 304 Not Modified (0ms)
+
+
+Started GET "/admin/products" for 127.0.0.1 at 2013-01-17 15:55:36 +0530
+  Processing by Admin::ProductsController#index as HTML
+  [1m[35mAdminUser Load (0.2ms)[0m  SELECT `admin_users`.* FROM `admin_users` WHERE `admin_users`.`id` = 1 LIMIT 1
+  [1m[36m (0.2ms)[0m  [1mSELECT COUNT(*) FROM `products` WHERE `products`.`released_at` IS NULL[0m
+  [1m[35m (0.3ms)[0m  SELECT COUNT(count_column) FROM (SELECT 1 AS count_column FROM `products` LIMIT 30 OFFSET 0) subquery_for_count 
+  [1m[36m (0.2ms)[0m  [1mSELECT COUNT(*) FROM `products` [0m
+  [1m[35mCACHE (0.0ms)[0m  SELECT COUNT(count_column) FROM (SELECT 1 AS count_column FROM `products` LIMIT 30 OFFSET 0) subquery_for_count 
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT COUNT(*) FROM `products` [0m
+  [1m[35mProduct Load (0.4ms)[0m  SELECT `products`.* FROM `products` ORDER BY `products`.id desc LIMIT 30 OFFSET 0
+  [1m[36mCategory Load (0.2ms)[0m  [1mSELECT `categories`.* FROM `categories` WHERE `categories`.`id` = 1 LIMIT 1[0m
+  [1m[35mCategory Load (0.2ms)[0m  SELECT `categories`.* FROM `categories` 
+Rendered /home/cognizant/.rvm/gems/ruby-1.9.2-p290/gems/activeadmin-0.3.1/app/views/active_admin/resource/index.html.arb (118.0ms)
+Completed 200 OK in 139ms (Views: 121.6ms | ActiveRecord: 3.9ms)
+
+
+Started GET "/assets/active_admin.css" for 127.0.0.1 at 2013-01-17 15:55:36 +0530
+Served asset /active_admin.css - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_admin.js" for 127.0.0.1 at 2013-01-17 15:55:36 +0530
+Served asset /active_admin.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_admin/orderable.png" for 127.0.0.1 at 2013-01-17 15:55:37 +0530
+Served asset /active_admin/orderable.png - 200 OK (3ms)
+
+
+Started GET "/assets/active_admin/datepicker/datepicker-input-icon.png" for 127.0.0.1 at 2013-01-17 15:55:37 +0530
+Served asset /active_admin/datepicker/datepicker-input-icon.png - 304 Not Modified (0ms)
+
+
+Started GET "/admin/logout" for 127.0.0.1 at 2013-01-17 17:29:56 +0530
+  Processing by ActiveAdmin::Devise::SessionsController#destroy as HTML
+  Parameters: {"authenticity_token"=>"II1s1/K1bjdVu3VUc55E6S3h01n/6TwjBKBidkVjaJo="}
+  [1m[36mAdminUser Load (0.2ms)[0m  [1mSELECT `admin_users`.* FROM `admin_users` WHERE `admin_users`.`id` = 1 LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (0.0ms)[0m  [1mCOMMIT[0m
+Redirected to http://localhost:3000/admin
+Completed 302 Found in 24ms
+
+
+Started GET "/admin" for 127.0.0.1 at 2013-01-17 17:29:56 +0530
+  Processing by Admin::DashboardController#index as HTML
+Completed   in 1ms
+
+
+Started GET "/admin/login" for 127.0.0.1 at 2013-01-17 17:29:56 +0530
+  Processing by ActiveAdmin::Devise::SessionsController#new as HTML
+Rendered /home/cognizant/.rvm/gems/ruby-1.9.2-p290/gems/devise-1.4.5/app/views/devise/shared/_links.erb (1.5ms)
+Rendered /home/cognizant/.rvm/gems/ruby-1.9.2-p290/gems/activeadmin-0.3.1/app/views/active_admin/devise/sessions/new.html.erb within layouts/active_admin_logged_out (67.6ms)
+Completed 200 OK in 171ms (Views: 159.5ms | ActiveRecord: 1.1ms)
+
+
+Started GET "/assets/active_admin.css?body=1" for 127.0.0.1 at 2013-01-17 17:29:57 +0530
+Served asset /active_admin.css - 304 Not Modified (2ms)
+
+
+Started GET "/assets/active_admin.js?body=1" for 127.0.0.1 at 2013-01-17 17:29:57 +0530
+Served asset /active_admin.js - 304 Not Modified (0ms)
+
+
+Started GET "/assets/active_admin/vendor.js?body=1" for 127.0.0.1 at 2013-01-17 17:29:57 +0530
+Served asset /active_admin/vendor.js - 304 Not Modified (2ms)
+
+
+Started GET "/assets/active_admin/base.js?body=1" for 127.0.0.1 at 2013-01-17 17:29:57 +0530
+Served asset /active_admin/base.js - 304 Not Modified (2ms)
